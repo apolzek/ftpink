@@ -8,9 +8,9 @@ def conn():
     try:
         ftp = FTP(
             # pylint: disable=maybe-no-member
-            host=settings.FTP_HOST,  # pylint: disable=maybe-no-member
-            user=settings.FTP_LOGIN,  # pylint: disable=maybe-no-member
-            passwd=settings.FTP_PASSWD,  # pylint: disable=maybe-no-member
+            host=settings.FTP_HOST,
+            user=settings.FTP_LOGIN,  
+            passwd=settings.FTP_PASSWD,  
             acct='',
             timeout=None,
         )
