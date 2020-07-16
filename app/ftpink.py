@@ -4,29 +4,33 @@ import time
 import settings
 
 
-def run():
+def conn():
     try:
-        while True:
-            ftp = FTP(
-                host=settings.FTP_HOST,
-                user=settings.FTP_LOGIN,
-                passwd=settings.FTP_PASSWD,
-                acct='',
-                timeout=None,
-            )
+        ftp = FTP(
+            # pylint: disable=maybe-no-member
+            host=settings.FTP_HOST,  # pylint: disable=maybe-no-member
+            user=settings.FTP_LOGIN,  # pylint: disable=maybe-no-member
+            passwd=settings.FTP_PASSWD,  # pylint: disable=maybe-no-member
+            acct='',
+            timeout=None,
+        )
+        logger.info(ftp.welcome)
+        return ftp
 
-            logger.info(ftp.welcome)
-            ftp.cwd('/')
-            logger.info(ftp.nlst())
-
-            filenames = ftp.nlst()
-            for filename in filenames:
-
-                with open(filename, 'wb') as file:
-                    ftp.retrbinary('RETR %s' % filename, file.write)
-
-            ftp.quit()
-            time.sleep(settings.TIME_SLEEP)
     except Exception:
-        logger.error('530 Login incorrect.')
-        pass
+        logger.error('FTP connection failed.')
+        exit(1)
+
+
+def run():
+
+    ftp_con = conn()
+    ftp_con.cwd('/')
+    filenames = ftp_con.nlst()
+
+    for filename in filenames:
+        try:
+            with open(filename, 'wb') as file:
+                ftp_con.retrbinary('RETR %s' % filename, file.write)
+        except Exception:
+            pass
